@@ -1,0 +1,6 @@
+INDEX VERSION 1.4+D:\BlogginnSite\.metadata\.plugins\org.eclipse.wst.jsdt.core\indexes
+262134268.index
+5182305.index
+1587910119.index
+3951259627.index
+368790301.index

@@ -1,0 +1,77 @@
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+xmlns:beans="http://www.springframework.org/schema/beans"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+		http://www.springframework.org/schema/security
+		http://www.springframework.org/schema/security/spring-security.xsd">
+
+
+ <beans:bean id="myDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+
+        <beans:property name="driverClass" value="oracle.jdbc.driver.OracleDriver" />
+        <beans:property name="jdbcUrl" value="jdbc:oracle:thin:@localhost:1521:XE" />
+         <beans:property name="user" value="bloggingsite" />
+         <beans:property name="password" value="bloggingsite" />
+     
+         <beans:property name="minPoolSize" value="5" />
+         <beans:property name="maxPoolSize" value="20" />
+         <beans:property name="maxIdleTime" value="30000" />
+       
+        
+    </beans:bean> 
+    
+    <beans:bean id="passwordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"></beans:bean>
+
+<http pattern="/resources/**" security="none"/>
+<!-- <http>
+<intercept-url pattern="/admin/**" access="hasRole('ADMIN')" />
+<form-login />
+<logout />
+</http> -->
+
+<http>
+<!-- use of hasAuthority  -->
+	<intercept-url pattern="/admin/login" access="permitAll"/>
+	<intercept-url pattern="/admin/**" access="hasAuthority('admin')"/>
+	
+	<intercept-url pattern="/**" access="permitAll"/>
+	<form-login login-page="/adminlogin" login-processing-url="/adminloginProccessing"/>
+	<access-denied-handler error-page="/access-denied"/>
+	
+
+</http>
+
+
+
+<!-- using jdbc serice to authenticate -->
+
+	<authentication-manager>
+		<authentication-provider>
+		<password-encoder ref="passwordEncoder"/>
+			<jdbc-user-service data-source-ref="myDataSource" 
+			users-by-username-query="select email,password,enabled from registeruser where email= ?"
+			authorities-by-username-query="select email,role from registeruser where email = ?"
+			/>
+			
+			
+		</authentication-provider>
+		</authentication-manager>
+		
+		
+		
+		
+		
+		
+		
+		<!-- 	<authentication-manager>
+<authentication-provider>
+	<user-service>
+	<user name="sonu" password="sonu" authorities="admin" />
+	
+	</user-service>
+</authentication-provider>
+</authentication-manager> -->
+
+</beans:beans>
+	
